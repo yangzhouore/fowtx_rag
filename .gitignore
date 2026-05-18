@@ -1,0 +1,14 @@
+# Python cache
+__pycache__/
+*.pyc
+
+# Virtual environment
+.venv/
+
+# VS Code settings
+.vscode/
+fowt_rag.code-workspace
+
+# Private/local data
+
+
