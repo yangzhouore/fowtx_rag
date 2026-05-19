@@ -1,0 +1,18 @@
+# Core LangChain
+langchain
+langchain-openai
+langchain-community
+langchain-chroma
+langchain-text-splitters
+
+# Vector database
+chromadb
+
+# Environment variables
+python-dotenv
+
+# Document loading
+pypdf
+
+# Web app UI
+streamlit
