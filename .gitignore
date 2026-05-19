@@ -5,6 +5,9 @@ __pycache__/
 # Virtual environment
 .venv/
 
+# OpenAI API key file
+.env
+
 # VS Code settings
 .vscode/
 fowt_rag.code-workspace
