@@ -9,7 +9,7 @@ COLLECTION_NAME = "fowt_rag_knowledge_base"
 
 EMBEDDING_MODEL = "text-embedding-3-small"  
 
-CHUNK_SIZE = 1000
-CHUNK_OVERLAP = 200
+CHUNK_SIZE = 500
+CHUNK_OVERLAP = 100
 
 RETRIEVAL_K = 4
