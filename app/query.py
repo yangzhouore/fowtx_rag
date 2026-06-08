@@ -1,32 +1,12 @@
 from dotenv import load_dotenv
 
-from langchain_openai import ChatOpenAI, OpenAIEmbeddings
-from langchain_chroma import Chroma
+from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.output_parsers import StrOutputParser
 
-load_dotenv()
-
-DB_DIR = "data/chroma_db"
-
-embeddings = OpenAIEmbeddings(
-    model="text-embedding-3-small"
-)
-
-vectorstore = Chroma(
-    persist_directory=DB_DIR,
-    embedding_function=embeddings,
-)
-
-retriever = vectorstore.as_retriever(
-    search_kwargs={"k": 4}
-)
-
-llm = ChatOpenAI(
-    model="gpt-4o-mini",
-    temperature=0,
-)
+from app.config import LLM_MODEL, RETRIEVAL_K
+from app.vectorstore import load_vectorstore
 
 prompt = ChatPromptTemplate.from_template(
     """
@@ -41,23 +21,71 @@ Question:
 )
 
 
+def format_doc(doc):
+    source = doc.metadata.get("source", "unknown")
+    page = doc.metadata.get("page")
+    page_label = f", page {page + 1}" if isinstance(page, int) else ""
+    return f"Source: {source}{page_label}\n{doc.page_content}"
+
+
 def format_docs(docs):
-    return "\n\n".join(doc.page_content for doc in docs)
+    return "\n\n".join(format_doc(doc) for doc in docs)
 
 
-rag_chain = (
-    {
-        "context": retriever | format_docs,
-        "question": RunnablePassthrough(),
-    }
-    | prompt
-    | llm
-    | StrOutputParser()
-)
+def summarize_sources(docs):
+    seen = []
 
-question = input("Question: ")
+    for doc in docs:
+        source = doc.metadata.get("source", "unknown")
+        page = doc.metadata.get("page")
+        page_label = f"page {page + 1}" if isinstance(page, int) else "page unknown"
+        item = f"{source} ({page_label})"
 
-answer = rag_chain.invoke(question)
+        if item not in seen:
+            seen.append(item)
 
-print("\nAnswer:")
-print(answer)
+    return seen
+
+
+def build_rag_chain():
+    vectorstore = load_vectorstore()
+    retriever = vectorstore.as_retriever(
+        search_kwargs={"k": RETRIEVAL_K}
+    )
+    llm = ChatOpenAI(
+        model=LLM_MODEL,
+        temperature=0,
+    )
+
+    return (
+        {
+            "context": retriever | format_docs,
+            "question": RunnablePassthrough(),
+        }
+        | prompt
+        | llm
+        | StrOutputParser()
+    )
+
+
+def main():
+    load_dotenv()
+    vectorstore = load_vectorstore()
+    retriever = vectorstore.as_retriever(
+        search_kwargs={"k": RETRIEVAL_K}
+    )
+    rag_chain = build_rag_chain()
+    question = input("Question: ")
+    retrieved_docs = retriever.invoke(question)
+    answer = rag_chain.invoke(question)
+
+    print("\nAnswer:")
+    print(answer)
+    print("\nSources:")
+
+    for item in summarize_sources(retrieved_docs):
+        print(f"- {item}")
+
+
+if __name__ == "__main__":
+    main()

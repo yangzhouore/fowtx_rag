@@ -1,18 +1,22 @@
 # Used to load the pdf files
 
-from langchain_community.document_loaders import DirectoryLoader, TextLoader
+from pathlib import Path
+
+from langchain_community.document_loaders import DirectoryLoader
 from langchain_community.document_loaders.pdf import PyPDFLoader
 
-from app.config import DATA_TEST_DIR, DATA_DIR
+from app.config import DATA_DIR
 
-def load_documents():
+def load_documents(data_dir=DATA_DIR):
 
     """
     Load documents from the specified directory.
     """
 
-    if not DATA_DIR.exists():
-        raise FileNotFoundError(f"Data directory {DATA_DIR} does not exist.")
+    data_path = Path(data_dir)
+
+    if not data_path.exists():
+        raise FileNotFoundError(f"Data directory {data_path} does not exist.")
     
     loader = DirectoryLoader(
         # Used for testing with markdown files
@@ -23,11 +27,16 @@ def load_documents():
         # show_progress=True,
     
         # Used for production with pdf files
-        str(DATA_DIR),
+        str(data_path),
         glob="**/*.pdf",
         loader_cls=PyPDFLoader,
         show_progress=True,
-        silent_errors=True, 
+        silent_errors=False,
     )
 
-    return loader.load()
+    documents = loader.load()
+
+    if not documents:
+        raise ValueError(f"No documents were loaded from {data_path}.")
+
+    return documents
