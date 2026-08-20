@@ -19,6 +19,7 @@ The repository currently demonstrates the core RAG flow locally.
 - FastAPI application skeleton
 - `GET /health` endpoint
 - `POST /query` endpoint
+- Next.js frontend skeleton and polished static UI
 
 ## V0 Target
 
@@ -29,8 +30,8 @@ Turn the existing local prototype into a small public web application.
 - [x] Add FastAPI application
 - [x] Add `POST /query`
 - [x] Add `GET /health`
-- [ ] Add Next.js frontend
-- [ ] Add polished search/answer UI
+- [x] Add Next.js frontend
+- [x] Add polished search/answer UI
 - [ ] Connect frontend to API
 - [ ] Show citations in the UI
 - [x] Add basic backend tests
