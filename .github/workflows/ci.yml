@@ -26,10 +26,10 @@ jobs:
           pip install pytest ruff
 
       - name: Compile Python files
-        run: python -m compileall app tests
+        run: python -m compileall app api tests
 
       - name: Run Ruff
-        run: ruff check app tests
+        run: ruff check app api tests
 
       - name: Run tests
         run: pytest -q
