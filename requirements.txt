@@ -11,6 +11,10 @@ chromadb
 # Environment variables
 python-dotenv
 
+# API
+fastapi
+httpx
+
 # Document loading
 pypdf
 
