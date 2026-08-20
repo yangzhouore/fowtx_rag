@@ -67,22 +67,40 @@ def build_rag_chain():
     )
 
 
-def main():
-    load_dotenv()
+def answer_question(question):
     vectorstore = load_vectorstore()
     retriever = vectorstore.as_retriever(
         search_kwargs={"k": RETRIEVAL_K}
     )
-    rag_chain = build_rag_chain()
-    question = input("Question: ")
     retrieved_docs = retriever.invoke(question)
-    answer = rag_chain.invoke(question)
+    llm = ChatOpenAI(
+        model=LLM_MODEL,
+        temperature=0,
+    )
+    rag_chain = prompt | llm | StrOutputParser()
+    answer = rag_chain.invoke(
+        {
+            "context": format_docs(retrieved_docs),
+            "question": question,
+        }
+    )
+
+    return {
+        "answer": answer,
+        "sources": summarize_sources(retrieved_docs),
+    }
+
+
+def main():
+    load_dotenv()
+    question = input("Question: ")
+    result = answer_question(question)
 
     print("\nAnswer:")
-    print(answer)
+    print(result["answer"])
     print("\nSources:")
 
-    for item in summarize_sources(retrieved_docs):
+    for item in result["sources"]:
         print(f"- {item}")
 
 
