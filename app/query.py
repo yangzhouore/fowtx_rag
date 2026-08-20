@@ -1,9 +1,8 @@
 from dotenv import load_dotenv
-
-from langchain_openai import ChatOpenAI
+from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnablePassthrough
-from langchain_core.output_parsers import StrOutputParser
+from langchain_openai import ChatOpenAI
 
 from app.config import LLM_MODEL, RETRIEVAL_K
 from app.vectorstore import load_vectorstore

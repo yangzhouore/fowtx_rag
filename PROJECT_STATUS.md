@@ -2,7 +2,7 @@
 
 ## Current Stage
 
-**Stage: Local RAG prototype → Online V0**
+**Stage: Local RAG prototype -> Online V0**
 
 The repository currently demonstrates the core RAG flow locally.
 
@@ -15,6 +15,7 @@ The repository currently demonstrates the core RAG flow locally.
 - similarity retrieval
 - LLM answer generation
 - basic source/page reporting
+- MVP-0 pytest and CI baseline
 
 ## V0 Target
 
@@ -29,8 +30,8 @@ Turn the existing local prototype into a small public web application.
 - [ ] Add polished search/answer UI
 - [ ] Connect frontend to API
 - [ ] Show citations in the UI
-- [ ] Add basic backend tests
-- [ ] Add GitHub Actions CI
+- [x] Add basic backend tests
+- [x] Add GitHub Actions CI
 - [ ] Deploy frontend and backend
 
 ## Not Yet Needed

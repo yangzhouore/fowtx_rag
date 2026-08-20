@@ -7,6 +7,7 @@ from langchain_community.document_loaders.pdf import PyPDFLoader
 
 from app.config import DATA_DIR
 
+
 def load_documents(data_dir=DATA_DIR):
 
     """
