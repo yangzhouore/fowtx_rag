@@ -1,8 +1,8 @@
 from dotenv import load_dotenv
 
 from app.config import RESET_VECTORSTORE_ON_INGEST
-from app.text_loaders import load_documents
 from app.splitter import split_documents
+from app.text_loaders import load_documents
 from app.vectorstore import create_vectorstore, deduplicate_documents
 
 

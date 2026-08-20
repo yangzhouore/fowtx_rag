@@ -2,7 +2,7 @@ import shutil
 
 from langchain_chroma import Chroma
 
-from app.config import DB_DIR, COLLECTION_NAME
+from app.config import COLLECTION_NAME, DB_DIR
 from app.embeddings import get_embeddings
 
 

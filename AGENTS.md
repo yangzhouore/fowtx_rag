@@ -18,6 +18,7 @@ The current priority is the smallest useful online product:
 - Never commit API keys, secrets, local databases, or generated data.
 - Keep source citations visible in RAG answers.
 - Update documentation when architecture or project status changes.
+- Do not inspect or read files under `data/raw/` unless the current task explicitly requires it.
 
 ## Expected Structure
 
