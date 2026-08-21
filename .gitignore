@@ -16,3 +16,7 @@ fowt_rag.code-workspace
 data/
 
 
+
+# Next.js generated agent files
+web/AGENTS.md
+web/CLAUDE.md

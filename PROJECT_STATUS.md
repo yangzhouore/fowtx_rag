@@ -20,6 +20,7 @@ The repository currently demonstrates the core RAG flow locally.
 - `GET /health` endpoint
 - `POST /query` endpoint
 - Next.js frontend skeleton and polished static UI
+- frontend query integration with live answer and source rendering
 
 ## V0 Target
 
@@ -32,8 +33,8 @@ Turn the existing local prototype into a small public web application.
 - [x] Add `GET /health`
 - [x] Add Next.js frontend
 - [x] Add polished search/answer UI
-- [ ] Connect frontend to API
-- [ ] Show citations in the UI
+- [x] Connect frontend to API
+- [x] Show citations in the UI
 - [x] Add basic backend tests
 - [x] Add GitHub Actions CI
 - [ ] Deploy frontend and backend
