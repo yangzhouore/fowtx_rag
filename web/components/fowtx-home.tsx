@@ -2,19 +2,42 @@
 
 import Link from "next/link";
 import { FormEvent, useState } from "react";
-import { ArrowRight, BookOpenText, ExternalLink, FileText, Waves } from "lucide-react";
+import { AlertCircle, ArrowRight, BookOpenText, ExternalLink, FileText, Loader2, Waves } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { queryKnowledgeBase, type QueryResponse } from "@/lib/query-api";
 
 const examples = ["Dynamic cables", "Mooring", "Hydrodynamics", "Platforms"];
 
 export function FowtxHome() {
   const [question, setQuestion] = useState("");
+  const [result, setResult] = useState<QueryResponse | null>(null);
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+
+    const trimmedQuestion = question.trim();
+
+    if (!trimmedQuestion || isLoading) {
+      return;
+    }
+
+    setIsLoading(true);
+    setError("");
+    setResult(null);
+
+    try {
+      const queryResult = await queryKnowledgeBase(trimmedQuestion);
+      setResult(queryResult);
+    } catch {
+      setError("The knowledge service is unavailable. Try again in a moment.");
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   return (
@@ -65,9 +88,17 @@ export function FowtxHome() {
                   className="min-h-28 resize-none border-0 bg-transparent px-3 py-3 text-base leading-7 shadow-none focus-visible:ring-0"
                 />
                 <div className="flex items-center justify-between gap-3 border-t border-slate-100 px-3 py-2">
-                  <span className="text-xs font-medium text-slate-500">Ask a question to explore the knowledge base.</span>
-                  <Button type="submit" size="icon" aria-label="Submit question" className="rounded-md bg-teal-800 text-white hover:bg-teal-900">
-                    <ArrowRight className="size-4" aria-hidden="true" />
+                  <span className="text-xs font-medium text-slate-500">
+                    {isLoading ? "Searching the knowledge base..." : "Ask a question to explore the knowledge base."}
+                  </span>
+                  <Button
+                    type="submit"
+                    size="icon"
+                    aria-label="Submit question"
+                    disabled={isLoading || !question.trim()}
+                    className="rounded-md bg-teal-800 text-white hover:bg-teal-900"
+                  >
+                    {isLoading ? <Loader2 className="size-4 animate-spin" aria-hidden="true" /> : <ArrowRight className="size-4" aria-hidden="true" />}
                   </Button>
                 </div>
               </div>
@@ -87,26 +118,43 @@ export function FowtxHome() {
 
           <aside className="border-t border-slate-200 pt-8 lg:border-l lg:border-t-0 lg:pl-10 lg:pt-0">
             <div className="space-y-6">
-              <section className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
-                <div className="flex items-center gap-3 text-slate-900">
-                  <FileText className="size-5 text-teal-800" aria-hidden="true" />
-                  <h2 className="text-lg font-semibold">Answer</h2>
-                </div>
-                <p className="mt-4 text-sm leading-6 text-slate-500">
-                  Answers and supporting sources will appear here.
-                </p>
-              </section>
+              {error ? (
+                <section className="rounded-lg border border-rose-200 bg-white p-6 shadow-sm" role="alert">
+                  <div className="flex items-center gap-3 text-rose-900">
+                    <AlertCircle className="size-5 text-rose-700" aria-hidden="true" />
+                    <h2 className="text-lg font-semibold">Unable to answer</h2>
+                  </div>
+                  <p className="mt-4 text-sm leading-6 text-rose-700">{error}</p>
+                </section>
+              ) : (
+                <section className="rounded-lg border border-slate-200 bg-white p-6 shadow-sm" aria-live="polite" aria-busy={isLoading}>
+                  <div className="flex items-center gap-3 text-slate-900">
+                    <FileText className="size-5 text-teal-800" aria-hidden="true" />
+                    <h2 className="text-lg font-semibold">Answer</h2>
+                  </div>
+                  {isLoading ? (
+                    <p className="mt-4 text-sm leading-6 text-slate-500">Searching the knowledge base...</p>
+                  ) : result ? (
+                    <p className="mt-4 whitespace-pre-wrap text-sm leading-6 text-slate-700">{result.answer}</p>
+                  ) : (
+                    <p className="mt-4 text-sm leading-6 text-slate-500">Answers and supporting sources will appear here.</p>
+                  )}
+                </section>
+              )}
 
               <section className="rounded-lg border border-dashed border-slate-300 bg-white/70 p-6">
                 <h2 className="text-sm font-semibold uppercase tracking-[0.18em] text-slate-500">Sources</h2>
-                <div className="mt-4 space-y-3">
-                  <div className="h-3 w-3/4 rounded bg-slate-200" />
-                  <div className="h-3 w-2/3 rounded bg-slate-200" />
-                  <div className="h-3 w-1/2 rounded bg-slate-200" />
-                </div>
-                <p className="mt-5 text-sm leading-6 text-slate-500">
-                  Source citations and page references will be listed here with each future answer.
-                </p>
+                {result?.sources.length ? (
+                  <ul className="mt-4 space-y-3">
+                    {result.sources.map((source) => (
+                      <li key={source} className="rounded-md border border-slate-200 bg-white px-3 py-2 text-sm leading-5 text-slate-700">
+                        {source}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="mt-5 text-sm leading-6 text-slate-500">Source citations and page references will be listed here with each answer.</p>
+                )}
               </section>
             </div>
           </aside>
