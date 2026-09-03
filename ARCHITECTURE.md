@@ -56,6 +56,7 @@ Initial API surface:
 ```text
 POST /query
 GET  /health
+GET  /ready
 ```
 
 The API should call the RAG layer rather than duplicate RAG logic.
