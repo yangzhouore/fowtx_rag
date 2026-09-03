@@ -18,6 +18,7 @@ The repository currently demonstrates the core RAG flow locally.
 - MVP-0 pytest and CI baseline
 - FastAPI application skeleton
 - `GET /health` endpoint
+- `GET /ready` endpoint for backend readiness checks
 - `POST /query` endpoint
 - Next.js frontend skeleton and polished static UI
 - frontend query integration with live answer and source rendering
@@ -31,6 +32,7 @@ Turn the existing local prototype into a small public web application.
 - [x] Add FastAPI application
 - [x] Add `POST /query`
 - [x] Add `GET /health`
+- [x] Add `GET /ready`
 - [x] Add Next.js frontend
 - [x] Add polished search/answer UI
 - [x] Connect frontend to API

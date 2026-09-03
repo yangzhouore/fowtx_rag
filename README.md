@@ -85,7 +85,7 @@ The frontend build uses `next/font/google`, so the build environment must be abl
 
 V0 uses two deployable services:
 
-- **Backend:** FastAPI service exposing `GET /health` and `POST /query`
+- **Backend:** FastAPI service exposing `GET /health`, `GET /ready`, and `POST /query`
 - **Frontend:** Next.js app in `web/`, with a server-side `/api/query` route that forwards requests to FastAPI
 
 The browser should call the Next.js app, not the FastAPI service directly. This keeps API routing server-side and avoids exposing OpenAI credentials to the browser.
@@ -186,6 +186,25 @@ Expected response:
 
 ```json
 {"status":"ok"}
+```
+
+Check readiness:
+
+```bash
+curl https://your-backend-host.example/ready
+```
+
+Expected shape:
+
+```json
+{
+  "status": "ready",
+  "checks": {
+    "openai_api_key": true,
+    "vectorstore_path": true,
+    "vectorstore_loadable": true
+  }
+}
 ```
 
 Check the query endpoint:
